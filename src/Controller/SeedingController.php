@@ -6,17 +6,18 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SeedingController extends AbstractController
 {
     #[Route('/seeding/user', name: 'app_seeding_user')]
-    public function seedUser(EntityManagerInterface $entityManager): JsonResponse
+    public function seedUser(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $user = new User();
         $user->setEmail("gimmyarazafimbelo2@gmail.com");
         $user->setName("gimmyaraz");
-        $user->setPassword("mdpGimmy");
+        $user->setPassword($passwordHasher->hashPassword($user, "mdpGimmy"));
 
         $entityManager->persist($user);
         $entityManager->flush();
