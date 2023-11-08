@@ -11,9 +11,7 @@ class LoginController extends AbstractController
     #[Route('/login', name: 'login')]
     public function index(): Response {
 
-        return $this->render('login.html.twig', [
-            'name' => 'Muriel',
-        ]);
+        return $this->render('login.html.twig');
         
     }
 }
