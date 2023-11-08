@@ -23,6 +23,10 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+            form_login:
+                login_path: app_login
+                check_path: app_login
+
             json_login:
                 check_path: api_login
 
@@ -35,6 +39,8 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+
+        - { route: app_home, roles: ROLE_USER }
 
 when@test:
     security:
