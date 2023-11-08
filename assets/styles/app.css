@@ -1,0 +1,17 @@
+.text-purple {
+    color: blueviolet;
+}
+
+a.text-purple:hover {
+    color: rgb(110, 34, 182);
+}
+
+.btn-purple {
+    background-color: blueviolet;
+    color: white;
+}
+
+.btn-purple:hover {
+    background-color: rgb(110, 34, 182);
+    color: white;
+}
