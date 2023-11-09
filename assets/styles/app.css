@@ -19,3 +19,7 @@ a.text-purple:hover {
 .bg-purple {
     background-color: blueviolet;
 }
+
+.bg-gray {
+    background-color: #E5E5E5;
+}
