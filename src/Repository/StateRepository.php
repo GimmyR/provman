@@ -45,4 +45,16 @@ class StateRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findAllAssociative(): array {
+
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT * FROM state st';
+
+        $resultSet = $conn->executeQuery($sql);
+
+        return $resultSet->fetchAllAssociative();
+
+    }
 }
