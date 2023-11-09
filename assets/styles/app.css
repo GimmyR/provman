@@ -15,3 +15,7 @@ a.text-purple:hover {
     background-color: rgb(110, 34, 182);
     color: white;
 }
+
+.bg-purple {
+    background-color: blueviolet;
+}
