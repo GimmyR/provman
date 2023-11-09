@@ -1,5 +1,5 @@
 <script setup>
-defineProps({ username: String });
+defineProps({ username: String, states: Object });
 </script>
 
 <template>
@@ -10,9 +10,7 @@ defineProps({ username: String });
                 <form class="d-flex mx-auto" role="search">
                     <div class="input-group">
                         <select class="form-select navbar-select" aria-label="Default select">
-                            <option value="1" selected>In Stock</option>
-                            <option value="2" selected>In Use</option>
-                            <option value="3" selected>Finished</option>
+                            <option v-for="state in states" v-bind:value="state.id">{{ state.name }}</option>
                         </select>
                         <input type="search" class="form-control" placeholder="Search provision" aria-label="Search"/>
                         <button type="button" class="btn btn-light">
