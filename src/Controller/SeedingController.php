@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\State;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +25,28 @@ class SeedingController extends AbstractController
         
         return $this->json([
             'users' => $entityManager->getRepository(User::class)->findAll()
+        ]);
+    }
+
+    #[Route('/seeding/state', name: 'app_seeding_state')]
+    public function seedState(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $state1 = new State();
+        $state1->setName("In Stock");
+
+        $state2 = new State();
+        $state2->setName("In Use");
+
+        $state3 = new State();
+        $state3->setName("Finished");
+
+        $entityManager->persist($state1);
+        $entityManager->persist($state2);
+        $entityManager->persist($state3);
+        $entityManager->flush();
+        
+        return $this->json([
+            'users' => $entityManager->getRepository(State::class)->findAll()
         ]);
     }
 }
