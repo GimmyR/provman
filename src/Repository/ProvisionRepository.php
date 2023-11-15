@@ -21,6 +21,18 @@ class ProvisionRepository extends ServiceEntityRepository
         parent::__construct($registry, Provision::class);
     }
 
+    public function findByStateAssociative(int $stateId): array {
+
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT pr.id, pr.name, pr.image FROM provision pr WHERE pr.state_id = :state_id ORDER BY place';
+
+        $resultSet = $conn->executeQuery($sql, [ 'state_id' => $stateId ]);
+
+        return $resultSet->fetchAllAssociative();
+
+    }
+
 //    /**
 //     * @return Provision[] Returns an array of Provision objects
 //     */
