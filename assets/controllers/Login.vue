@@ -8,7 +8,6 @@ const form = reactive({
 });
 
 const postLogin = async function() {
-    console.log(form);
     const response = await fetch("/api/login", {
         method: "POST",
         headers: {
