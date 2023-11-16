@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Home{% endblock %}
+
+{% block body %}
+
+<div {{ vue_component('Home', { 'username': username, 'states': states, 'provisions': provisions }) }}>
+    Home.vue has to be displayed here !
+</div>
+
+{% endblock %}
