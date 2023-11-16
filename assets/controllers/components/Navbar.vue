@@ -1,4 +1,6 @@
 <script setup>
+import AddProvisionModal from './AddProvisionModal.vue';
+
 defineProps({ username: String, states: Object });
 </script>
 
@@ -20,7 +22,7 @@ defineProps({ username: String, states: Object });
                 </form>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="#" class="nav-link bi bi-plus-circle fs-4"></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#add-provision-modal" class="nav-link bi bi-plus-circle fs-4"></a>
                     </li>
                     <li class="nav-item">
                         <div class="dropdown">
