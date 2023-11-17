@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from 'vue';
+import { toBase64 } from '../../helpers';
 
 const props = defineProps({ provision: Object, save: Object });
 
 const editImage = function(event) {
-
+    toBase64(event.target.files[0])
+        .then(blob => props.provision.image = blob)
+        .catch(error => console.log("ERROR: ", error));
 };
 
 const handleRemove = function() {
