@@ -8,6 +8,7 @@ use App\Repository\ProvisionRepository;
 use App\Repository\StateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,32 +29,11 @@ class ApiEditProvisionsController extends AbstractController
 
         $provisions = json_decode($request->getContent(), true);
         $states = $entityManager->getRepository(State::class)->findAll();
+
         $provisions = $this->removeProvisions($states, $provisions, $entityManager, $provRep);
+        $this->saveProvisions($states, $provisions, $entityManager, $provRep);
 
-        for($i = 0; $i < count($states); $i++) {
-
-            for($j = 0; $j < count($provisions[$i]); $j++) {
-
-                $provision = null;
-
-                if(isset($provisions[$i][$j]["new"]))
-                    $provision = new Provision();
-
-                else $provision = $provRep->find($provisions[$i][$j]["id"]);
-
-                $provision->setState($states[$i]);
-                $provision->setPlace($j + 1);
-                $provision->setName($provisions[$i][$j]["name"]);
-                $provision->setImage($provisions[$i][$j]["image"]);
-
-                if(isset($provisions[$i][$j]["new"]))
-                    $entityManager->persist($provision);
-
-                $entityManager->flush();
-
-            }
-
-        } return $this->reorderProvisions($states, $provRep);
+        return $this->reorderProvisions($states, $provRep);
 
     }
 
@@ -74,6 +54,56 @@ class ApiEditProvisionsController extends AbstractController
             }
 
         } return $provisions;
+
+    }
+
+    private function saveProvisions(array $states, array $provisions, EntityManagerInterface $entityManager, ProvisionRepository $provRep): void {
+
+        for($i = 0; $i < count($states); $i++) {
+
+            for($j = 0; $j < count($provisions[$i]); $j++) {
+
+                $provision = null;
+
+                if(isset($provisions[$i][$j]["new"]))
+                    $provision = new Provision();
+
+                else $provision = $provRep->find($provisions[$i][$j]["id"]);
+
+                $provision->setState($states[$i]);
+                $provision->setPlace($j + 1);
+                $provision->setName($provisions[$i][$j]["name"]);
+                $image = $provisions[$i][$j]["image"];
+
+                if($provision->getImage() != $image) {
+                    $filename = $this->generateFilename(). '.' .$this->getExtension($image);
+                    file_put_contents('./provisions/' .$filename, file_get_contents($image));
+                    $provision->setImage($filename);
+                }
+
+                if(isset($provisions[$i][$j]["new"]))
+                    $entityManager->persist($provision);
+
+                $entityManager->flush();
+
+            }
+
+        } 
+
+    }
+
+    private function generateFilename(): string {
+
+        return bin2hex(random_bytes(5));
+
+    }
+
+    private function getExtension(string $base64): string {
+
+        $tab1 = explode(";", $base64);
+        $tab2 = explode("/", $tab1[0]);
+
+        return $tab2[1];
 
     }
 

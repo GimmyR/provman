@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { toBase64 } from '../../helpers';
 
 const props = defineProps({ provisions: Object, save: Object });
 
@@ -10,7 +11,9 @@ const provision = ref({
 });
 
 const editImage = function(event) {
-
+    toBase64(event.target.files[0])
+        .then(blob => provision.value.image = blob)
+        .catch(error => console.log("ERROR: ", error));
 };
 
 const editProvisions = function() {
@@ -34,7 +37,7 @@ const editProvisions = function() {
                 <div class="modal-body">
                     <form>
                         <input type="text" class="form-control mb-3" v-model="provision.name" placeholder="Name"/>
-                        <input type="file" class="form-control" @change="editImage"/>
+                        <input type="file" class="form-control" @change="editImage" accept="image/*"/>
                     </form>
                 </div>
                 <div class="modal-footer">
