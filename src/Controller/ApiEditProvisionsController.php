@@ -75,7 +75,7 @@ class ApiEditProvisionsController extends AbstractController
                 $provision->setName($provisions[$i][$j]["name"]);
                 $image = $provisions[$i][$j]["image"];
 
-                if($provision->getImage() != $image) {
+                if($image != null && $provision->getImage() != $image) {
                     $filename = $this->generateFilename(). '.' .$this->getExtension($image);
                     file_put_contents('./provisions/' .$filename, file_get_contents($image));
                     $provision->setImage($filename);
