@@ -17,7 +17,7 @@ const classes = reactive({ display: "d-none" });
             <h2 class="fs-5 text-center">{{ provision.name }}</h2>
         </div>
         <div class="d-flex flex-row justify-content-center">
-            <p>{{ provision.image }}</p>
+            <img v-if="provision.image != null" v-bind:src="'/provisions/' + provision.image"/>
         </div>
     </div>
 </template>
