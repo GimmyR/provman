@@ -32,7 +32,7 @@ class ApiEditProvisionsController extends AbstractController
         $states = $entityManager->getRepository(State::class)->findAll();
 
         $provisions = $this->removeProvisions($states, $provisions, $entityManager, $provRep, $filesystem);
-        $this->saveProvisions($states, $provisions, $entityManager, $provRep);
+        $this->saveProvisions($states, $provisions, $entityManager, $provRep, $filesystem);
 
         return $this->reorderProvisions($states, $provRep);
 
@@ -59,7 +59,7 @@ class ApiEditProvisionsController extends AbstractController
 
     }
 
-    private function saveProvisions(array $states, array $provisions, EntityManagerInterface $entityManager, ProvisionRepository $provRep): void {
+    private function saveProvisions(array $states, array $provisions, EntityManagerInterface $entityManager, ProvisionRepository $provRep, Filesystem $filesystem): void {
 
         for($i = 0; $i < count($states); $i++) {
 
@@ -77,11 +77,8 @@ class ApiEditProvisionsController extends AbstractController
                 $provision->setName($provisions[$i][$j]["name"]);
                 $image = $provisions[$i][$j]["image"];
 
-                if($image != null && $provision->getImage() != $image) {
-                    $filename = $this->generateFilename(). '.' .$this->getExtension($image);
-                    file_put_contents('./provisions/' .$filename, file_get_contents($image));
-                    $provision->setImage($filename);
-                }
+                if($image != null && $provision->getImage() != $image)
+                    $this->setImage($provision, $image, $filesystem);
 
                 if(isset($provisions[$i][$j]["new"]))
                     $entityManager->persist($provision);
@@ -91,6 +88,18 @@ class ApiEditProvisionsController extends AbstractController
             }
 
         } 
+
+    }
+
+    private function setImage(Provision $provision, string $image, Filesystem $filesystem): void {
+
+        $directory = './provisions/';
+        $imagePath = $directory . $provision->getImage();
+        if($filesystem->exists($imagePath))
+            $filesystem->remove($imagePath);
+        $filename = $this->generateFilename(). '.' .$this->getExtension($image);
+        file_put_contents($directory . $filename, file_get_contents($image));
+        $provision->setImage($filename);
 
     }
 
