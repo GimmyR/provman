@@ -46,9 +46,12 @@ class ApiEditProvisionsController extends AbstractController
 
                 if(isset($provisions[$i][$j]["remove"]) && $provisions[$i][$j]["remove"]) {
                     $provision = $provRep->find($provisions[$i][$j]["id"]);
-                    $filesystem->remove('./provisions/' .$provision->getImage());
+                    $image = $provision->getImage();
                     $entityManager->remove($provision);
                     $entityManager->flush();
+                    $prov = $provRep->findOneBy([ 'image' => $image ]);
+                    if($prov == null && $image != null)
+                        $filesystem->remove('./provisions/' .$image);
                     array_splice($provisions[$i], $j, 1);
                     break;
                 }
@@ -63,27 +66,27 @@ class ApiEditProvisionsController extends AbstractController
 
         for($i = 0; $i < count($states); $i++) {
 
+            $place = 1;
+
             for($j = 0; $j < count($provisions[$i]); $j++) {
 
-                $provision = null;
-
                 if(isset($provisions[$i][$j]["new"]))
-                    $provision = new Provision();
+                    $place = $this->newProvisions($provisions, $i, $j, $states, $filesystem, $entityManager);
 
-                else $provision = $provRep->find($provisions[$i][$j]["id"]);
+                else {
+                    
+                    $provision = $provRep->find($provisions[$i][$j]["id"]);
+                    $image = $provisions[$i][$j]["image"];
 
-                $provision->setState($states[$i]);
-                $provision->setPlace($j + 1);
-                $provision->setName($provisions[$i][$j]["name"]);
-                $image = $provisions[$i][$j]["image"];
+                    if($image != null && $provision->getImage() != $image)
+                        $this->setImage($provision, $image, $filesystem);
 
-                if($image != null && $provision->getImage() != $image)
-                    $this->setImage($provision, $image, $filesystem);
+                    $provision->setState($states[$i]);
+                    $provision->setPlace($j + $place);
+                    $provision->setName($provisions[$i][$j]["name"]);
+                    $entityManager->flush();
 
-                if(isset($provisions[$i][$j]["new"]))
-                    $entityManager->persist($provision);
-
-                $entityManager->flush();
+                }
 
             }
 
@@ -91,15 +94,44 @@ class ApiEditProvisionsController extends AbstractController
 
     }
 
-    private function setImage(Provision $provision, string $image, Filesystem $filesystem): void {
+    private function newProvisions(array $provisions, int $i, int $j, array $states, Filesystem $filesystem, EntityManagerInterface $entityManager): int {
+
+        $filename = null;
+        $image = $provisions[$i][$j]["image"];
+        
+        for($k = 1; $k <= $provisions[$i][$j]["quantity"]; $k++) {
+        
+            $provision = new Provision();
+
+            if($filename == null && $image != null)
+                $this->setImage($provision, $image, $filesystem);
+            else if($filename != null) $provision->setImage($filename);
+
+            $provision->setState($states[$i]);
+            $provision->setPlace($j + $k);
+            $provision->setName($provisions[$i][$j]["name"]);
+            $entityManager->persist($provision);
+            $entityManager->flush();
+
+        } return $provisions[$i][$j]["quantity"];
+
+    }
+
+    private function setImage(Provision $provision, string $image, Filesystem $filesystem): string {
 
         $directory = './provisions/';
-        $imagePath = $directory . $provision->getImage();
-        if($filesystem->exists($imagePath))
-            $filesystem->remove($imagePath);
+
+        if($provision->getImage() != null) {
+            $imagePath = $directory . $provision->getImage();
+            if($filesystem->exists($imagePath))
+                $filesystem->remove($imagePath);
+        }
+
         $filename = $this->generateFilename(). '.' .$this->getExtension($image);
         file_put_contents($directory . $filename, file_get_contents($image));
         $provision->setImage($filename);
+
+        return $filename;
 
     }
 

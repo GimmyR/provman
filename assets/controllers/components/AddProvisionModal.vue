@@ -7,7 +7,8 @@ const props = defineProps({ provisions: Object, save: Object });
 const provision = ref({
     name: "",
     image: null,
-    new: true
+    new: true,
+    quantity: 1
 });
 
 const editImage = function(event) {
@@ -21,7 +22,8 @@ const editProvisions = function() {
     provision.value = {
         name: "",
         image: null,
-        new: true
+        new: true,
+        quantity: 1
     }; props.save();
 };
 </script>
@@ -37,7 +39,11 @@ const editProvisions = function() {
                 <div class="modal-body">
                     <form>
                         <input type="text" class="form-control mb-3" v-model="provision.name" placeholder="Name"/>
-                        <input type="file" class="form-control" @change="editImage" accept="image/*"/>
+                        <input type="file" class="form-control mb-3" @change="editImage" accept="image/*"/>
+                        <div class="input-group">
+                            <span class="input-group-text">Quantity</span>
+                            <input type="number" class="form-control" v-model="provision.quantity" min="1" step="1"/>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
