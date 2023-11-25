@@ -7,7 +7,7 @@ const classes = reactive({ display: "d-none" });
 </script>
 
 <template>
-    <div class="col-12 shadow-lg mb-4 d-flex flex-column" @mouseenter="() => classes.display = 'd-inline'" @mouseleave="() => classes.display = 'd-none'">
+    <div class="col-12 shadow-lg mb-4 d-flex flex-column" v-bind:id="'prov' + provision.id" @mouseenter="() => classes.display = 'd-inline'" @mouseleave="() => classes.display = 'd-none'">
         <div class="d-flex flex-row justify-content-end close-button-div">
             <button type="button" @click="() => edit(provision)" class="btn btn-danger rounded-0" v-bind:class="classes.display" data-bs-toggle="modal" data-bs-target="#edit-provision-modal">
                 <i class="bi bi-pencil-fill"></i>

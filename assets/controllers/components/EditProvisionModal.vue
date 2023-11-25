@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { toBase64 } from '../../helpers';
 
-const props = defineProps({ provision: Object, save: Object });
+const props = defineProps({ provision: Object, save: Object, remove: Object });
 
 const editImage = function(event) {
     toBase64(event.target.files[0])
@@ -11,7 +11,7 @@ const editImage = function(event) {
 };
 
 const handleRemove = function() {
-    props.provision.remove = true;
+    props.remove(props.provision.id);
     props.save();
 };
 

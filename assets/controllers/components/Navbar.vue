@@ -1,7 +1,22 @@
 <script setup>
+import { reactive } from 'vue';
 import AddProvisionModal from './AddProvisionModal.vue';
 
-defineProps({ username: String, states: Object });
+const props = defineProps({ username: String, states: Object, getProvisionsAt: Object });
+
+const search = reactive({
+    option: props.states[0].id,
+    text: null
+});
+
+const handleChange = function($event) {
+    search.option = parseInt($event.target.value);
+};
+
+const handleSearch = function() {
+    const prov = props.getProvisionsAt(search.option - 1).find(provision => provision.name.toLowerCase().includes(search.text.toLowerCase()));
+    document.location.href = "#prov" + prov.id;
+};
 </script>
 
 <template>
@@ -9,13 +24,13 @@ defineProps({ username: String, states: Object });
         <div class="container-fluid">
             <a href="/" class="navbar-brand fw-bold">ProvMan</a>
             <div class="collapse navbar-collapse d-flex flex-row justify-content-between">
-                <form class="d-flex mx-auto" role="search">
+                <form class="d-flex mx-auto" role="search" @submit.prevent="handleSearch">
                     <div class="input-group">
-                        <select class="form-select navbar-select" aria-label="Default select">
+                        <select class="form-select navbar-select" aria-label="Default select" @change="handleChange">
                             <option v-for="state in states" v-bind:value="state.id">{{ state.name }}</option>
                         </select>
-                        <input type="search" class="form-control" placeholder="Search provision" aria-label="Search"/>
-                        <button type="button" class="btn btn-light">
+                        <input type="search" class="form-control" placeholder="Search provision" aria-label="Search" v-model="search.text"/>
+                        <button type="submit" class="btn btn-light">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>

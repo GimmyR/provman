@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { toBase64 } from '../../helpers';
 
-const props = defineProps({ provisions: Object, save: Object });
+const props = defineProps({ provisions: Object, save: Object, pushProvisionAt: Object });
 
 const provision = ref({
     name: "",
@@ -18,7 +18,8 @@ const editImage = function(event) {
 };
 
 const editProvisions = function() {
-    props.provisions[0].push(provision.value);
+    props.pushProvisionAt(0, provision.value);
+    //props.provisions[0].push(provision.value);
     provision.value = {
         name: "",
         image: null,

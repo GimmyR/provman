@@ -5,15 +5,14 @@ import { reactive, ref } from 'vue';
 import AddProvisionModal from './AddProvisionModal.vue';
 import EditProvisionModal from './EditProvisionModal.vue';
 
-const props = defineProps({ columns: Array, provisions: Array });
+const props = defineProps({ columns: Array, pushProvisionAt: Object, getProvisions: Object, setProvisions: Object, setProvisionAt: Object, remove: Object });
 
-const provs = ref(props.provisions);
+const provs = ref(props.getProvisions());
 
 const toModify = reactive({
     id: null,
     name: "",
-    image: null,
-    remove: false
+    image: null
 });
 
 const modify = function(edit) {
@@ -26,9 +25,7 @@ const setProvisions = function() {
     for(var i = 0; i < provs.value.length; i++) {
         for(var j = 0; j < provs.value[i].length; j++) {
             if(provs.value[i][j].id == toModify.id) {
-                provs.value[i][j].name = toModify.name;
-                provs.value[i][j].image = toModify.image;
-                provs.value[i][j].remove = toModify.remove;
+                props.setProvisionAt(i, j, toModify);
                 editProvisions();
                 break;
             }
@@ -42,12 +39,13 @@ const postProvisions = async function() {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(provs.value)
+        body: JSON.stringify(props.getProvisions())
     }); return response.json();
 };
 
 const editProvisions = function() {
     postProvisions().then(response => {
+        props.setProvisions(response.provisions);
         provs.value = response.provisions;
     }).catch(error => console.log("ERROR: ", error));
 };
@@ -68,8 +66,8 @@ const editProvisions = function() {
             </div>
         </div>
     </div>
-    <AddProvisionModal v-bind:provisions="provs" v-bind:save="editProvisions"/>
-    <EditProvisionModal v-bind:provision="toModify" v-bind:save="setProvisions"/>
+    <AddProvisionModal v-bind:provisions="provs" v-bind:save="editProvisions" v-bind:push-provision-at="pushProvisionAt"/>
+    <EditProvisionModal v-bind:provision="toModify" v-bind:save="setProvisions" v-bind:remove="remove"/>
 </template>
 
 <style>
