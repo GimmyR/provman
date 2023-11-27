@@ -56,7 +56,7 @@ const editProvisions = function() {
             <div v-for="(column, index) in columns" class="col-4 h-100">
                 <div class="bg-light d-flex flex-column align-items-center px-5 pb-5 mh-100 overflow-auto">
                     <h1 class="py-4 fs-2">{{ column.name }}</h1>
-                    <draggable v-model="provisions[index]" tag="div" group="provisions" class="col-12" @end="editProvisions">
+                    <draggable v-model="provisions[index]" tag="div" group="provisions" class="col-12" @end="editProvisions" v-bind:item-key="column.name">
                         <template #item="{ element: provision }">
                             <ProvisionItem v-bind:provision="provision" v-bind:edit="modify"/>
                         </template>
