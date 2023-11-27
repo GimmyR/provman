@@ -5,7 +5,7 @@ import { reactive, ref } from 'vue';
 import AddProvisionModal from './AddProvisionModal.vue';
 import EditProvisionModal from './EditProvisionModal.vue';
 
-const props = defineProps({ columns: Array, pushProvisionAt: Object, getProvisions: Object, setProvisions: Object, setProvisionAt: Object, remove: Object });
+const props = defineProps({ columns: Array, provisions: Array, pushProvisionAt: Object, getProvisions: Object, setProvisions: Object, setProvisionAt: Object, remove: Object });
 
 const provs = ref(props.getProvisions());
 
@@ -21,10 +21,10 @@ const modify = function(edit) {
     toModify.image = edit.image;
 };
 
-const setProvisions = function() {
-    for(var i = 0; i < provs.value.length; i++) {
-        for(var j = 0; j < provs.value[i].length; j++) {
-            if(provs.value[i][j].id == toModify.id) {
+const setProvs = function() {
+    for(var i = 0; i < props.provisions.length; i++) {
+        for(var j = 0; j < props.provisions[i].length; j++) {
+            if(props.provisions[i][j].id == toModify.id) {
                 props.setProvisionAt(i, j, toModify);
                 editProvisions();
                 break;
@@ -46,7 +46,6 @@ const postProvisions = async function() {
 const editProvisions = function() {
     postProvisions().then(response => {
         props.setProvisions(response.provisions);
-        provs.value = response.provisions;
     }).catch(error => console.log("ERROR: ", error));
 };
 </script>
@@ -57,7 +56,7 @@ const editProvisions = function() {
             <div v-for="(column, index) in columns" class="col-4 h-100">
                 <div class="bg-light d-flex flex-column align-items-center px-5 pb-5 mh-100 overflow-auto">
                     <h1 class="py-4 fs-2">{{ column.name }}</h1>
-                    <draggable v-model="provs[index]" tag="div" group="provisions" class="col-12" @end="editProvisions">
+                    <draggable v-model="provisions[index]" tag="div" group="provisions" class="col-12" @end="editProvisions">
                         <template #item="{ element: provision }">
                             <ProvisionItem v-bind:provision="provision" v-bind:edit="modify"/>
                         </template>
@@ -66,8 +65,8 @@ const editProvisions = function() {
             </div>
         </div>
     </div>
-    <AddProvisionModal v-bind:provisions="provs" v-bind:save="editProvisions" v-bind:push-provision-at="pushProvisionAt"/>
-    <EditProvisionModal v-bind:provision="toModify" v-bind:save="setProvisions" v-bind:remove="remove"/>
+    <AddProvisionModal v-bind:provisions="provisions" v-bind:save="editProvisions" v-bind:push-provision-at="pushProvisionAt"/>
+    <EditProvisionModal v-bind:provision="toModify" v-bind:save="setProvs" v-bind:remove="remove"/>
 </template>
 
 <style>
