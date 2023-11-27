@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { toBase64 } from '../../helpers';
 
-const props = defineProps({ provisions: Object, save: Object, pushProvisionAt: Object });
+const props = defineProps({ provisions: Object, save: Function, pushProvisionAt: Function });
 
 const provision = ref({
     name: "",

@@ -5,7 +5,7 @@ import { reactive, ref } from 'vue';
 import AddProvisionModal from './AddProvisionModal.vue';
 import EditProvisionModal from './EditProvisionModal.vue';
 
-const props = defineProps({ columns: Array, provisions: Array, pushProvisionAt: Object, getProvisions: Object, setProvisions: Object, setProvisionAt: Object, remove: Object });
+const props = defineProps({ columns: Array, provisions: Array, pushProvisionAt: Function, getProvisions: Function, setProvisions: Function, setProvisionAt: Function, remove: Function });
 
 const provs = ref(props.getProvisions());
 

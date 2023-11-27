@@ -2,7 +2,7 @@
 import { reactive } from 'vue';
 import AddProvisionModal from './AddProvisionModal.vue';
 
-const props = defineProps({ username: String, states: Object, getProvisionsAt: Object });
+const props = defineProps({ username: String, states: Object, getProvisionsAt: Function });
 
 const search = reactive({
     option: props.states[0].id,

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { toBase64 } from '../../helpers';
 
-const props = defineProps({ provision: Object, save: Object, remove: Object });
+const props = defineProps({ provision: Object, save: Function, remove: Function });
 
 const editImage = function(event) {
     toBase64(event.target.files[0])
